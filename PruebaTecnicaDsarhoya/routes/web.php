@@ -20,8 +20,9 @@ Route::get('/', function () {
     
 });
 
+Route::get('valordolar/{mes}','\App\Http\Controllers\TestController@valorDolarMes');
+Route::resource('valordolar', '\App\Http\Controllers\TestController');
 
-Route::resource('test', '\App\Http\Controllers\TestController');
 
 Auth::routes();
 

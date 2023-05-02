@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Test;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class TestController extends Controller
 {
@@ -15,8 +16,19 @@ class TestController extends Controller
     public function index()
     {
         //
-        $nombres = Test:: all();
-        return view('TestFolder.test',compact('nombres'));
+        //https://api.sbif.cl/api-sbifv3/recursos_api/dolar/2023/4?apikey=d8093171162117c0c6e8da895b00978d4e2b6a0e&formato=JSON
+        
+        $APIanual = Http::get('https://api.sbif.cl/api-sbifv3/recursos_api/dolar/2022?apikey=d8093171162117c0c6e8da895b00978d4e2b6a0e&formato=JSON');
+
+        $APImensual = Http::get('https://api.sbif.cl/api-sbifv3/recursos_api/dolar/2022/4?apikey=d8093171162117c0c6e8da895b00978d4e2b6a0e&formato=JSON');
+        $decodeado = $APIanual->json();
+        $decodeado = $decodeado['Dolares'];
+
+        $decodeadoMensual = $APImensual->json();
+        $decodeadoMensual = $decodeadoMensual['Dolares'];
+        //dd($decodeadoMensual);
+
+        return view('TestFolder.test',compact('decodeado','decodeadoMensual'));
     }
 
     /**
@@ -97,5 +109,14 @@ class TestController extends Controller
     public function destroy(Test $test)
     {
         //
+    }
+
+    public function valorDolarMes($mes){
+        //dd($mes);
+        $APImensual = Http::get('https://api.sbif.cl/api-sbifv3/recursos_api/dolar/2022/'.$mes.'?apikey=d8093171162117c0c6e8da895b00978d4e2b6a0e&formato=JSON');
+        $decodeadoMensual = $APImensual->json();
+        $decodeadoMensual = $decodeadoMensual['Dolares'];
+
+        return view('TestFolder.valormes',compact('decodeadoMensual','mes'));
     }
 }
